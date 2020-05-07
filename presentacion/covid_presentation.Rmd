@@ -25,24 +25,59 @@ Las opiniones emitidas son personales y en condición de académicos. No represe
 <!--- --------------------------------------------------------------------- --->
 ## Contenido
 
-- Motivación 
-- Estrategia empirica
-- Resultados
-- Comentarios finales
-
+<div style="font-size:40px">
+- Motivación <br><br>
+- Estrategia empirica <br><br>
+- Resultados <br><br>
+- Comentarios finales <br><br>
+</div>
 <!--- --------------------------------------------------------------------- --->
 ## Motivación
 
-- Riesgo de propagación indiscriminada del COVID-19 es el principal desafío que enfrenta la ciudadanía en general a nivel global.
-- La respuestaal riesgoha sido el distanciamiento.
-- La efectividad de las estrategias es medida a través de las estimaciones del número de contagios $R_0$.
--Usamos un enfoque estado - espacio para estimar las trayectorias del $R_0$ en distintos países y en las provincias de R.D.
+- Riesgo de propagación indiscriminada del COVID-19 es el principal desafío que enfrenta la ciudadanía en general a nivel global. <br><br>
+
+- La respuestaal riesgoha sido el distanciamiento. <br><br>
+
+- La efectividad de las estrategias es medida a través de las estimaciones del número de contagios $R_0$.<br><br>
+
+- Usamos un enfoque estado - espacio para estimar las trayectorias del $R_0$ en distintos países y en las provincias de R.D.
 
 <!--- --------------------------------------------------------------------- --->
 # Estrategia empírica
 
 <!--- --------------------------------------------------------------------- --->
-##
+## Modelo SIR como marco conceptual {.small}
+
+- Suceptibles ($S$), Infectados ($I$) y Removidos ($R$)
+
+    1. $\frac{\partial S_t}{\partial _t} = \beta I_t S_t/ N$
+    3. $\frac{\partial I_t}{\partial _t} = \beta I_t S_t/ N - \gamma I_t$
+    2. $\frac{\partial R_t}{\partial _t} = \gamma I_t$
+
+- $\beta$($=$ # de interacciones x transmisibilidad del virus) es la tasa efectiva de contangio.
+- $\gamma$ corresponde a la tasa de cremiento de la población removida. (1 / días de incubación del virus)
+
+<!--- --------------------------------------------------------------------- --->
+## Modelo SIR como marco conceptual {.small}
+
+- Reescribiendo la ecuación (2) como: $\frac{\frac{\partial I_t}{\partial_t}}{I_t} = (\beta S/N-\gamma)$, se obtiene la definición de $R_0$ como :
+
+$$R_0 = \frac{\beta S/N}{\gamma}$$
+
+- El cual refleja el número promedio de contagios secundarios, generado por un nuevo caso de contagio.
+
+- Note que cuando $R_0  < 1$, $\frac{\frac{\partial I_t}{\partial_t}}{I_t} < 0$, es decir, la epidemia se dispara. 
+
+
+<!--- --------------------------------------------------------------------- --->
+## Modelo SIR como marco conceptual {.small}
+
+- $R_0$, además de depender de parámetros epidemiológicos, depende de factores de ser influenciados por la conducta social.
+
+- En oras palabras, $R_0$ es un parámetro que cambia, ya sea por que las personas se aíslan, o porque las autoridades inducen el distaciamiento social.
+
+
+
 
 
 

@@ -3143,6 +3143,8 @@ slide:not(.current) .plotly.html-widget{
           </hgroup>
   </slide>
 
+<!--- --------------------------------------------------------------------- --->
+
 <slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2></h2></hgroup><article  class="flexbox vcenter" id="section">
 
 <p style="color: white;">
@@ -3151,13 +3153,71 @@ Las opiniones emitidas son personales y en condición de académicos. No represe
 
 </p>
 
+<!--- --------------------------------------------------------------------- --->
+
 </article></slide><slide class=""><hgroup><h2>Contenido</h2></hgroup><article  id="contenido">
 
+<div style="font-size:40px">
 <ul>
-<li>Motivación</li>
-<li>Estrategia empirica</li>
-<li>Resultados</li>
-<li>Comentarios finales</li>
+<li>Motivación <br><br></li>
+<li>Estrategia empirica <br><br></li>
+<li>Resultados <br><br></li>
+<li>Comentarios finales <br><br></li>
+</ul></div>
+
+<!--- --------------------------------------------------------------------- --->
+
+</article></slide><slide class=""><hgroup><h2>Motivación</h2></hgroup><article  id="motivación">
+
+<ul>
+<li><p>Riesgo de propagación indiscriminada del COVID-19 es el principal desafío que enfrenta la ciudadanía en general a nivel global. <br><br></p></li>
+<li><p>La respuestaal riesgoha sido el distanciamiento. <br><br></p></li>
+<li><p>La efectividad de las estrategias es medida a través de las estimaciones del número de contagios \(R_0\).<br><br></p></li>
+<li><p>Usamos un enfoque estado - espacio para estimar las trayectorias del \(R_0\) en distintos países y en las provincias de R.D.</p></li>
+</ul>
+
+<!--- --------------------------------------------------------------------- --->
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Estrategia empírica</h2></hgroup><article  id="estrategia-empírica">
+
+<!--- --------------------------------------------------------------------- --->
+
+</article></slide><slide class=""><hgroup><h2>Modelo SIR como marco conceptual</h2></hgroup><article  class="small" id="modelo-sir-como-marco-conceptual">
+
+<ul>
+<li><p>Suceptibles (\(S\)), Infectados (\(I\)) y Removidos (\(R\))</p>
+
+<ol>
+<li>\(\frac{\partial S_t}{\partial _t} = \beta I_t S_t/ N\)</li>
+<li>\(\frac{\partial I_t}{\partial _t} = \beta I_t S_t/ N - \gamma I_t\)</li>
+<li>\(\frac{\partial R_t}{\partial _t} = \gamma I_t\)</li>
+</ol></li>
+<li><p>\(\beta\)(\(=\) # de interacciones x transmisibilidad del virus) es la tasa efectiva de contangio.</p></li>
+<li><p>\(\gamma\) corresponde a la tasa de cremiento de la población removida. (1 / días de incubación del virus)</p></li>
+</ul>
+
+<!--- --------------------------------------------------------------------- --->
+
+</article></slide><slide class=""><hgroup><h2>Modelo SIR como marco conceptual</h2></hgroup><article  class="small" id="modelo-sir-como-marco-conceptual-1">
+
+<ul>
+<li>Reescribiendo la ecuación (2) como: \(\frac{\frac{\partial I_t}{\partial_t}}{I_t} = (\beta S/N-\gamma)\), se obtiene la definición de \(R_0\) como :</li>
+</ul>
+
+<p>\[R_0 = \frac{\beta S/N}{\gamma}\]</p>
+
+<ul>
+<li><p>El cual refleja el número promedio de contagios secundarios, generado por un nuevo caso de contagio.</p></li>
+<li><p>Note que cuando \(R_0 &lt; 1\), \(\frac{\frac{\partial I_t}{\partial_t}}{I_t} &lt; 0\), es decir, la epidemia se dispara.</p></li>
+</ul>
+
+<!--- --------------------------------------------------------------------- --->
+
+</article></slide><slide class=""><hgroup><h2>Modelo SIR como marco conceptual</h2></hgroup><article  class="small" id="modelo-sir-como-marco-conceptual-2">
+
+<ul>
+<li><p>\(R_0\), además de depender de parámetros epidemiológicos, depende de factores de ser influenciados por la conducta social.</p></li>
+<li><p>En oras palabras, \(R_0\) es un parámetro que cambia, ya sea por que las personas se aíslan, o porque las autoridades inducen el distaciamiento social.</p></li>
 </ul></article></slide>
 
 
