@@ -1,0 +1,52 @@
+---
+title: "COVID-19 en la República Dominicana"
+subtitle: "Declaramos la guerra, pero ... ¿la estamos ganando?"
+date: "Abril 2019"
+author: "Francisco Ramírez, Vicente de Peña"
+output: 
+    ioslides_presentation:
+        widescreen: true
+        logo: "logo_uasd.png"
+        css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+<!--- --------------------------------------------------------------------- --->
+#  {.flexbox .vcenter}
+
+<p style="color: white;">
+Las opiniones emitidas son personales y en condición de académicos. No representan la opinión de ninguna otra institución a la cual los autores se encuentran afiliados.
+</p>
+
+<!--- --------------------------------------------------------------------- --->
+## Contenido
+
+- Motivación 
+- Estrategia empirica
+- Resultados
+- Comentarios finales
+
+<!--- --------------------------------------------------------------------- --->
+## Motivación
+
+- Riesgo de propagación indiscriminada del COVID-19 es el principal desafío que enfrenta la ciudadanía en general a nivel global.
+- La respuestaal riesgoha sido el distanciamiento.
+- La efectividad de las estrategias es medida a través de las estimaciones del número de contagios $R_0$.
+-Usamos un enfoque estado - espacio para estimar las trayectorias del $R_0$ en distintos países y en las provincias de R.D.
+
+<!--- --------------------------------------------------------------------- --->
+# Estrategia empírica
+
+<!--- --------------------------------------------------------------------- --->
+##
+
+
+
+
+
+
+
