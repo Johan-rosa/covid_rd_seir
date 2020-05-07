@@ -12,6 +12,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+library(highcharter)
 ```
 
 
@@ -31,6 +32,7 @@ Las opiniones emitidas son personales y en condición de académicos. No represe
 - Resultados <br><br>
 - Comentarios finales <br><br>
 </div>
+
 <!--- --------------------------------------------------------------------- --->
 ## Motivación
 
@@ -75,6 +77,30 @@ $$R_0 = \frac{\beta S/N}{\gamma}$$
 - $R_0$, además de depender de parámetros epidemiológicos, depende de factores de ser influenciados por la conducta social.
 
 - En oras palabras, $R_0$ es un parámetro que cambia, ya sea por que las personas se aíslan, o porque las autoridades inducen el distaciamiento social.
+
+## Modelo espacio - estado
+
+
+<!--- --------------------------------------------------------------------- --->
+## Modelo espacio - estado {.small}
+
+- Tratando a $\beta$ como una variable aleatoria no observada, podemos usar la ecuación (2) del $SIR$ para inferirla a partir de los datos. Reescribiendo (2) como:
+    
+$$\hat{I_i} = \beta _i \hat{S_t} + U_t$$
+
+- donde $\hat{i_i} = I_t + (\gamma - 1)I_{t-1} S_{t-1}N$
+- La ecuación de estado y la distribuación d elos errores de medición y de estado son: 
+
+
+$$\beta _t = \beta_{t+1} + \varepsilon _t$$
+
+## Cantidad de contagiados y evolución del R0
+
+
+```{r}
+map_rcero <- readRDS("objetos/map_rcero.RDS")
+map_rcero
+```
 
 
 
