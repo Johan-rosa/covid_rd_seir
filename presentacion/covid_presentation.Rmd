@@ -13,6 +13,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(highcharter)
+library(magrittr)
+load("objetos/graficos_ws")
 ```
 
 
@@ -73,16 +75,17 @@ $$R_0 = \frac{\beta S/N}{\gamma}$$
 
 <!--- --------------------------------------------------------------------- --->
 ## Modelo SIR como marco conceptual {.small}
+ <br>
+ <br>
 
-- $R_0$, además de depender de parámetros epidemiológicos, depende de factores de ser influenciados por la conducta social.
+- $R_0$, además de depender de parámetros epidemiológicos, depende de factores de ser influenciados por la conducta social. <br><br>
 
-- En oras palabras, $R_0$ es un parámetro que cambia, ya sea por que las personas se aíslan, o porque las autoridades inducen el distaciamiento social.
-
-## Modelo espacio - estado
-
+- En oras palabras, $R_0$ es un parámetro que cambia, ya sea por que las personas se aíslan, o porque las autoridades inducen el distaciamiento social. <br><br>
 
 <!--- --------------------------------------------------------------------- --->
 ## Modelo espacio - estado {.small}
+
+<div style="font-size: 25px">
 
 - Tratando a $\beta$ como una variable aleatoria no observada, podemos usar la ecuación (2) del $SIR$ para inferirla a partir de los datos. Reescribiendo (2) como:
     
@@ -94,12 +97,58 @@ $$\hat{I_i} = \beta _i \hat{S_t} + U_t$$
 
 $$\beta _t = \beta_{t+1} + \varepsilon _t$$
 
+$$E(\varepsilon) = E(u) = 0;\ \ var(\varepsilon) = \sigma_\varepsilon ^2;\ \ var(u) = \sigma_u ^2;\ \ cov(\varepsilon, u) = 0$$
+</div>
+
+<!--- --------------------------------------------------------------------- --->
+## Estimación 
+
+- $\gamma = 1/14$. Es decir, pasan 14 días entre el contaigo y la inoculación del virus.<br><br>
+
+- La estimación se hace por ML, usando el filtro de Kalman.<br><br>
+
+- Los datos son los casos de infectados vigentes publicados poe el Centro de Ciencias de Sistemas e Ingeniería de la Universidad de Johns Hopkins.<br><br>
+
+- Limitaciones: los datos son influenciados por la medición de los casos usando pruebas que no son aleatorias, ni masivas.
+
+<!--- --------------------------------------------------------------------- --->
+# Resultados
+
+<!--- --------------------------------------------------------------------- --->
+## R0 República Dominicana y provincias
+
+<div class="row">
+  <div class="col-md-6" >
+ 
+#### República Dominicana 
+  <center>
+```{r fig.height= 8, fig.width = 6}
+plot_rcero_rd %>% 
+    hc_size(width = 460, height = 420)
+```
+  </center>
+  
+  
+  </div>
+  <div class="col-md-6">
+  
+#### Distrito Nacional
+  <center>
+```{r fig.height=8, fig.width=6}
+ plot_rcero_dn%>% 
+    hc_size(width = 460, height = 420)
+```
+  </center>
+ 
+  </div>
+</div>
+
+
+<!--- --------------------------------------------------------------------- --->
 ## Cantidad de contagiados y evolución del R0
 
-
 ```{r}
-map_rcero <- readRDS("objetos/map_rcero.RDS")
-map_rcero
+map_rcero 
 ```
 
 
