@@ -5,9 +5,8 @@ library(readxl)
 library(highcharter)
 
 
-url <- "countries/do/do-all"
 
-# Lectura de datos --------------------------------------------------------
+# Lectura de datos --- -----------------------------------------------------
 
 # Data de salud pública con los casos acumulados por días
 infectados <- read_excel(
@@ -29,7 +28,7 @@ mapdata <- get_data_from_map(download_map_data("countries/do/do-all"))
 catalogo_provincias <- mapdata %>% select(code = `hc-a2`, provincia = `woe-name`)
 
 
-# Manipulando los datos ---------------------------------------------------
+# Manipulando los datos --- ------------------------------------------------
 
 # Recoding de las provincias para que coincida con highcharter
 # Ellos tienen algunos nombres con porblemas, pero es necesario
@@ -42,7 +41,6 @@ infectados <- infectados %>%
                               "Hermanas Mirabal" = "Hermanas",
                               "Elías Piña" = "La Estrelleta") 
     )
-
 
 # Data para el mapa
 mapdata2 <- mapdata %>% 
@@ -66,14 +64,26 @@ rcero_nested <- rcero %>%
     mutate(tocolor = 1) %>% 
     nest(-code) %>% 
     mutate(
-        data = map(data, mutate_mapping, hcaes(x = iddate, y = rcero, color = tocolor), drop = TRUE),
+        data = map(data, mutate_mapping,
+                   hcaes(x = iddate, y = rcero, color = tocolor),
+                   drop = TRUE),
         data = map(data, list_parse)
     ) %>%
     rename(ttdata = data)
 
 mapdata2 <- left_join(mapdata2, rcero_nested)
 
-# Mapa --------------------------------------------------------------------
+
+# tema para  los gráficos de ggplot --- ------------------------------------
+
+theme_covid_rd <- theme_minimal() +
+    theme(
+        strip.text = element_text(face = "bold", size = 12),
+        axis.text = element_text(size = 12),
+        axis.title = element_text(face = "bold", size = 12)
+    )
+
+# Mapa --- -----------------------------------------------------------------
 
 # Tooltip plot con el Rcero por día 
 map_rcero <-  hcmap("countries/do/do-all",
@@ -96,3 +106,57 @@ map_rcero <-  map_rcero %>%
             series = list(list(color = "midnightblue", name = "Rcero")
         ))
     ))
+
+# Gráficos del Rcero y su promedio movil --- -------------------------------
+
+rcero <- rcero %>% 
+    group_by(provincia) %>% 
+    mutate(
+        code = ifelse(is.na(code), "RD", code),
+        fecha = lubridate::ymd(fecha),
+        rollmean = c(NA, NA, NA, NA, zoo::rollmean(rcero, 5))) %>% 
+    select(provincia, fecha, rcero, rollmean, code) %>% 
+    ungroup()
+
+
+rceroto_toplot <- rcero %>% 
+    select(fecha, provincia, rcero) %>% 
+    mutate(rcero = round(rcero, 2)) %>% 
+    pivot_wider(names_from = provincia, values_from = rcero)
+
+rollmean_toplot <- rcero %>% 
+    select(fecha, provincia, rollmean) %>% 
+    mutate(rollmean = round(rollmean, 2)) %>% 
+    pivot_wider(names_from = provincia, values_from = rollmean)
+
+
+# Gráfico Nacional 
+plot_rcero_rd <- highchart() %>% 
+    hc_xAxis(categories = format(rcero_to_plot$fecha, "%B %d")) %>% 
+    hc_add_series(name = "Rcero",
+                  data = rceroto_toplot$`República Dominicana`,
+                  type = "column")  %>% 
+    hc_add_series(name = "Promedio movil", data = rollmean_toplot$`República Dominicana`) %>% 
+    hc_add_theme(hc_theme_elementary())
+
+# Gráfico Distrito Nacional 
+plot_rcero_dn <- highchart() %>% 
+    hc_xAxis(categories = format(rcero_to_plot$fecha, "%B %d")) %>% 
+    hc_add_series(name = "Rcero",
+                  data = rceroto_toplot$`Distrito Nacional`,
+                  type = "column")  %>% 
+    hc_add_series(name = "Promedio movil", data = rollmean_toplot$`Distrito Nacional`) %>% 
+    hc_add_theme(hc_theme_elementary())
+
+
+
+# Guardando outputs -------------------------------------------------------
+
+# Objetos a borrar
+erase <- ls()[!ls() %in% c("plot_rcero_rd", "plot_rcero_dn", "map_rcero")]
+
+
+save.image("presentacion/objetos/graficos_ws")
+
+
+
