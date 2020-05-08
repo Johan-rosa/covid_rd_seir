@@ -2,7 +2,7 @@
 title: "COVID-19 en la República Dominicana"
 subtitle: "Declaramos la guerra, pero ... ¿la estamos ganando?"
 date: "Abril 2019"
-author: "Francisco Ramírez, Vicente de Peña"
+author: "Vicente de Peña, Raúl Ovalle, Francisco Ramírez"
 output: 
     ioslides_presentation:
         widescreen: true

@@ -150,6 +150,27 @@ plot_rcero_dn <- highchart() %>%
 
 
 
+# Graficos reproducción de contagios por país -----------------------------
+
+
+
+# Scatter del Rcero en diferentes momentos  -------------------------------
+
+rcero <- rcero %>% 
+  mutate(fecha = lubridate::ymd(fecha))
+
+# Gráficos del y = cuatro de mayo, x = 21 de marzso
+
+rcero %>% 
+  filter(as.character(fecha) %in% c("2020-03-29", "2020-05-04")) %>% 
+  mutate(fecha = format(fecha, "%B %d")) %>% 
+  pivot_wider(names_from = fecha, values_from = rcero) %>% 
+  ggplot(aes(x = `May 04`, y = `March 29`)) +
+  geom_point(size = 3, alpha = .8, color = "midnightblue") +
+  theme_minimal()
+
+
+
 # Guardando outputs -------------------------------------------------------
 
 # Objetos a borrar
