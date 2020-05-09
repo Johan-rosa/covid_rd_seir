@@ -18,4 +18,18 @@ slides > slide:not(.nobackground):before {
   background-size: 60px 75px;
 }
 
+table {
+  border-collapse: collapse;
+}
 
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.table-hover .table-primary:hover {
+  background-color: #9fcdff;
+}
+
+.table-hover .table-primary:hover > td,
+.table-hover .table-primary:hover > th {
+  background-color: #9fcdff;
+}

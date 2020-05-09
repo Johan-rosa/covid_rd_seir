@@ -6,14 +6,19 @@ author: "Vicente de Peña, Raúl Ovalle, Francisco Ramírez"
 output: 
     ioslides_presentation:
         widescreen: true
-        logo: "logo_uasd.png"
-        css: style.css
 ---
+<!---
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+--->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+options("kableExtra.html.bsTable" = T)
 library(highcharter)
 library(magrittr)
+library(kableExtra)
 load("objetos/graficos_ws")
 ```
 
@@ -114,19 +119,32 @@ $$E(\varepsilon) = E(u) = 0;\ \ var(\varepsilon) = \sigma_\varepsilon ^2;\ \ var
 <!--- --------------------------------------------------------------------- --->
 # Resultados
 
+
+
+<!--- --------------------------------------------------------------------- --->
+## Linea de tiempo de eventos imporantes
+
+```{r fig.width=10, fig.height=4}
+timeline_plotly %>% 
+  plotly::config(displayModeBar = F) 
+```
+
+
 <!--- --------------------------------------------------------------------- --->
 ## ¿Qué tan efectivas han sido las medidas?
 
 ##### Totalidad toque de queda (21 marzo - 04 mayo)
 ```{r fig.width=10}
-scatter_1plotly
+scatter_1plotly %>%
+  plotly::config(displayModeBar = F) 
 ```
 
 <!--- --------------------------------------------------------------------- --->
 ## ¿Qué tan efectivas han sido las medidas?
 
 ```{r fig.width=10}
-plot_matrix_plotly
+plot_matrix_plotly %>%
+  plotly::config(displayModeBar = F) 
 ```
 
 
@@ -167,11 +185,22 @@ plot_rcero_rd %>%
 map_rcero 
 ```
 
+<!--- --------------------------------------------------------------------- --->
+## R0 por provincias
 
-
-
-
-
+<div style="font-size:12px; color:black;">
+```{r}
+table1 %>% 
+    setNames(c("Provincias", "Días transcurridos", "Días requeridos R<1.4",
+               "[1.0-1.4]", "[1.5-1.9]", "[2.0-2.4]", "[2.5-3]", ">3")) %>% 
+kable() %>% 
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "bordered"),
+                  full_width = F) %>% 
+    add_header_above(c(" " = 1, " " = 1, " " = 1, "Días transcurridos en rango de R0*"= 5 )) %>% 
+    row_spec(0:1, bold = T) %>% 
+    pack_rows("", 14, 16)
+```
+</div>
 
 
 

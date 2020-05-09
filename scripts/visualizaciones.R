@@ -284,11 +284,35 @@ timeline_plotly <- plotly::ggplotly(timeline_plot, tooltip = c("text", "day"))
 plotly::subplot(scatter1, plot_matix_medidas)
 
 
+# Tablas HTML -------------------------------------------------------------
+
+table1 <- structure(
+  list(
+    provincias = c(
+      "Distrito Nacional", "Duarte", "Espaillat", "Hermanas Mirabal",
+      "La Altagracia", "La Romana", "La Vega", "Monseñor Nouel",
+      "Puerto Plata", "San Cristóbal", "Sánchez Ramírez", "Santiago",
+      "Santo Domingo", "R.D.", "China*", "Suecia"),
+    dt = c(41L, 41L, 41L, 41L, 41L, 41L, 41L, 41L, 41L, 41L, 41L, 41L,
+           41L, 41L, 41L, 41L),
+    dr = c(21L, 33L, 33L, 33L, 33L, NA, 40L, 33L, NA, NA, 36L,
+           35L, NA, 34L, 24L, 0L),
+    x_1_0_1_4 = c(4L, 9L, 3L, 4L, 9L, 0L, 2L, 7L, 0L, 0L, 4L, 6L, 0L, 3L, 18L, 0L),
+    x_1_5_1_9 = c(26L, 13L, 14L, 9L, 17L, 13L, 13L, 7L, 14L, 11L, 10L, 13L, 16L, 17L, 2L, 2L),
+    x_2_0_2_4 = c(4L, 7L, 9L, 7L, 15L, 20L, 26L, 10L, 6L, 14L, 6L, 22L, 8L, 11L, 2L, 18L),
+    x_2_5_3_0 = c(3L, 7L, 6L, 12L, 0L, 8L, 0L, 17L, 21L, 5L, 10L, 0L, 9L, 3L, 7L, 7L),
+    x_3 = c(4L, 5L, 9L, 9L, 0L, 0L, 0L, 0L, 0L, 11L, 11L, 0L, 8L, 7L, 12L, 14L)),
+  class = "data.frame", row.names = c(NA,-16L)
+  )
+
+
+
+
 # Guardando outputs -------------------------------------------------------
 
 # Objetos a borrar
 erase <- ls()[!ls() %in% c("plot_rcero_rd", "plot_rcero_dn", "map_rcero", "scatter_1plotly",
-                           "timeline_plotly", "plot_matrix_plotly")]
+                           "timeline_plotly", "plot_matrix_plotly", "table1")]
 
 
 save.image("presentacion/objetos/graficos_ws")
