@@ -76,14 +76,52 @@ rcero_nested <- rcero %>%
 mapdata2 <- left_join(mapdata2, rcero_nested)
 
 
-# tema para  los gráficos de ggplot --- ------------------------------------
 
-theme_covid_rd <- theme_minimal() +
-    theme(
-        strip.text = element_text(face = "bold", size = 12),
-        axis.text = element_text(size = 12),
-        axis.title = element_text(face = "bold", size = 12)
-    )
+# Spagetti plot -----------------------------------------------------------
+
+rcero_spagetti <- rcero %>% 
+  group_by(provincia) %>% 
+  mutate(fecha = lubridate::ymd(fecha),
+         iddate = 1,
+         iddate = cumsum(iddate),
+         rollmean = c(NA, NA, NA, NA, zoo::rollmean(rcero, 5)),
+         provincia2 = provincia
+  ) %>% 
+  ungroup() %>% 
+  select(provincia, provincia2, fecha, iddate, rollmean)
+
+plot_rcero_spagetti <-  rcero_spagetti %>%
+  filter(!is.na(rollmean)) %>% 
+  filter(provincia %in% c("Distrito Nacional", "Santo Domingo", "Santiago", "Duarte")) %>% 
+  ggplot(aes(x = fecha, y = rollmean)) +
+  geom_line(
+    data = select(rcero_spagetti, -provincia) %>% 
+      filter(!is.na(rollmean)),
+    aes(x = fecha, y = rollmean, group = provincia2),
+    alpha = 0.7,
+    color = "gray"
+  ) +
+  geom_line(aes(group = provincia), color = "midnightblue", size = 1.2) +
+  geom_hline(yintercept = 1, linetype = 2, size = 0.5) +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    strip.text = element_text(size = 13, face = "bold"),
+    axis.title = element_text(size = 13, face = "bold"),
+    axis.text = element_text(size = 13)
+  ) +
+  labs(
+    x = "",
+    y = "Promedio movil 5 días"
+  ) +
+  facet_wrap(~provincia)
+
+ggsave("visualizaciones/plot_rcero_spagetti.PNG",
+       plot_rcero_spagetti,
+       height = 8,
+       width = 10,
+       dpi = 1000)
+
 
 # Mapa --- -----------------------------------------------------------------
 
