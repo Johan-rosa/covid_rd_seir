@@ -115,6 +115,22 @@ $$E(\varepsilon) = E(u) = 0;\ \ var(\varepsilon) = \sigma_\varepsilon ^2;\ \ var
 # Resultados
 
 <!--- --------------------------------------------------------------------- --->
+## ¿Qué tan efectivas han sido las medidas?
+
+##### Totalidad toque de queda (21 marzo - 04 mayo)
+```{r fig.width=10}
+scatter_1plotly
+```
+
+<!--- --------------------------------------------------------------------- --->
+## ¿Qué tan efectivas han sido las medidas?
+
+```{r fig.width=10}
+plot_matrix_plotly
+```
+
+
+<!--- --------------------------------------------------------------------- --->
 ## R0 República Dominicana y provincias
 
 <div class="row">

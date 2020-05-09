@@ -119,7 +119,7 @@ rcero <- rcero %>%
     ungroup()
 
 
-rceroto_toplot <- rcero %>% 
+rcero_toplot <- rcero %>% 
     select(fecha, provincia, rcero) %>% 
     mutate(rcero = round(rcero, 2)) %>% 
     pivot_wider(names_from = provincia, values_from = rcero)
@@ -132,7 +132,7 @@ rollmean_toplot <- rcero %>%
 
 # Gráfico Nacional 
 plot_rcero_rd <- highchart() %>% 
-    hc_xAxis(categories = format(rcero_to_plot$fecha, "%B %d")) %>% 
+    hc_xAxis(categories = format(rcero_toplot$fecha, "%B %d")) %>% 
     hc_add_series(name = "Rcero",
                   data = rceroto_toplot$`República Dominicana`,
                   type = "column")  %>% 
@@ -141,9 +141,9 @@ plot_rcero_rd <- highchart() %>%
 
 # Gráfico Distrito Nacional 
 plot_rcero_dn <- highchart() %>% 
-    hc_xAxis(categories = format(rcero_to_plot$fecha, "%B %d")) %>% 
+    hc_xAxis(categories = format(rcero_toplot$fecha, "%B %d")) %>% 
     hc_add_series(name = "Rcero",
-                  data = rceroto_toplot$`Distrito Nacional`,
+                  data = rcero_toplot$`Distrito Nacional`,
                   type = "column")  %>% 
     hc_add_series(name = "Promedio movil", data = rollmean_toplot$`Distrito Nacional`) %>% 
     hc_add_theme(hc_theme_elementary())
@@ -155,26 +155,140 @@ plot_rcero_dn <- highchart() %>%
 
 
 # Scatter del Rcero en diferentes momentos  -------------------------------
+header <- c("date", "Distrito Nacional", "Duarte", "Espaillat", "Hermanas Mirabal",
+            "La Altagracia", "La Romana", "La Vega", "Monseñor Nouel", "Puerto Plata", 
+            "San Cristobal", "Santo Domingo", "Sánchez Ramírez", "Santiago", "Total")
+            
 
-rcero <- rcero %>% 
-  mutate(fecha = lubridate::ymd(fecha))
+
+rcero2 <- read_excel("SIR_provincias/resultados_provincias_2_cpm.xlsx", sheet = "R0") %>%
+  setNames(header) %>% 
+  mutate(date = seq(as.Date("2020-03-25"), by = "day", length.out = nrow(.))) %>% 
+  pivot_longer(names_to = "provincia", values_to = "casos", cols = -date)
+
 
 # Gráficos del y = cuatro de mayo, x = 21 de marzso
 
-rcero %>% 
-  filter(as.character(fecha) %in% c("2020-03-29", "2020-05-04")) %>% 
-  mutate(fecha = format(fecha, "%B %d")) %>% 
-  pivot_wider(names_from = fecha, values_from = rcero) %>% 
-  ggplot(aes(x = `May 04`, y = `March 29`)) +
+scatter1 <- rcero2 %>%  
+  filter(as.character(date) %in% c("2020-03-25", "2020-05-02")) %>% 
+  mutate(date = format(date, "%B %d")) %>%  
+  pivot_wider(names_from = date, values_from = casos) %>% 
+  ggplot(aes(text = provincia, y = `May 02`, x = `March 25`)) +
   geom_point(size = 3, alpha = .8, color = "midnightblue") +
-  theme_minimal()
+  geom_abline(intercept = 0, slope = 1) +
+  theme_minimal() +
+  labs(x = "21 de Marzo", y = '05 de Mayo') +
+  coord_cartesian(xlim = c(0, 7), ylim = c(0, 7))
+  
 
+scatter_1plotly <- plotly::ggplotly(scatter1, tooltip = "text")
+
+
+matix_medidas <- rcero2 %>%
+  mutate(
+    date = as.character(date),
+    cuarentena = case_when(
+      date == "2020-03-25" ~ "21 Marzo - 03 Abril",
+      date == "2020-04-03" ~ "21 Marzo - 03 Abril",
+      date == "2020-04-04" ~ "04 Abril - 18 Abril",
+      date == "2020-04-18" ~ "04 Abril - 18 Abril",
+      date == "2020-04-05" ~ "05 Abril - 30 Abril",
+      date == "2020-04-30" ~ "05 Abril - 30 Abril",
+      date == "2020-05-01" ~ "01 Mayo - 17 Mayo",
+      date == "2020-05-02" ~ "01 Mayo - 17 Mayo"
+    ),
+    minmax = case_when(
+        date == "2020-03-25" ~ "min",
+        date == "2020-04-03" ~ "max",
+        date == "2020-04-04" ~ "min",
+        date == "2020-04-18" ~ "max",
+        date == "2020-04-05" ~ "min",
+        date == "2020-04-30" ~ "max",
+        date == "2020-05-01" ~ "min",
+        date == "2020-05-02" ~ "max"
+      )
+    ) %>% filter(!is.na(cuarentena))
+
+
+matix_medidas <- matix_medidas %>% 
+  filter(minmax == "min") %>%
+  rename(min = casos) %>% 
+  left_join(matix_medidas %>% 
+              filter(minmax == "max") %>% 
+              rename(max = casos) %>% 
+              select(cuarentena, provincia, max)
+            ) %>% select(-minmax)
+
+ 
+plot_matix_medidas <- matix_medidas %>% 
+  mutate(
+    cuarentena = factor(cuarentena,
+                        levels = c("21 Marzo - 03 Abril",
+                                   "04 Abril - 18 Abril",
+                                   "05 Abril - 30 Abril",
+                                   "01 Mayo - 17 Mayo")),
+    color = max > min
+  ) %>% 
+  ggplot(aes(x = min, y = max, text = provincia, color = color)) +
+  geom_point(size = 3, show.legend = FALSE) +
+  facet_wrap(~cuarentena) +
+  geom_abline(intercept = 0, slope = 1) +
+  coord_cartesian(ylim = c(0, 7), xlim = c(0, 7)) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        strip.text = element_text(face = "bold", size = 12)) +
+  labs(x = "Inicio del periodo",
+       y = "Final del periodo") +
+  scale_color_manual(values = c("midnightblue", "red"))
+
+
+plot_matrix_plotly <- plotly::ggplotly(plot_matix_medidas, tooltip = "text")
+
+
+# Time line plot ----------------------------------------------------------
+
+timeline <- tibble(day = seq(as.Date("2020-02-21"), as.Date("2020-04-05"), by = "day")) 
+timeline <- timeline %>% 
+  mutate(
+    
+    hecho = case_when(day == "2020-02-26" ~ "Primer caso de Covid Latinoamérica (Brazin)",
+                      day == "2020-03-01" ~ "Primer caso importado en RD",
+                      day == "2020-03-12" ~ "Comisión seguimiento Covid-19",
+                      day == "2020-03-15" ~ "Elecciones Municipales",
+                      day == "2020-03-16" ~ "Primera Muerte reportada de COVID-19",
+                      day == "2020-03-18" ~ "Suspensión voluntaria de vuelos y cruceros desde y hacia Europa",
+                      day == "2020-03-19" ~ "Suspención de docencia",
+                      day == "2020-03-20" ~ "Reducción de horario de mobilidad 6am - 8pm",
+                      day == "2020-03-27" ~ "Reducción de horario de mobilidad de 6am - 5pm"
+    ),
+    color = str_detect(hecho, "muerte|lecciones|importado|atinoam"),
+    y = ifelse(is.na(hecho), NA, 1)
+  ) 
+
+
+
+timeline_plot <- timeline %>% 
+  ggplot(aes(text = hecho,x = day, y = y, color = color)) +
+  geom_point(size = 4) +
+  scale_color_manual(values = c("midnightblue", "red")) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.line.x = element_line(color = "black"),
+        axis.text.y = element_blank(),
+        axis.title = element_blank()) +
+  coord_cartesian(ylim = c(0,10), expand = FALSE)
+
+timeline_plotly <- plotly::ggplotly(timeline_plot, tooltip = c("text", "day"))
+
+
+plotly::subplot(scatter1, plot_matix_medidas)
 
 
 # Guardando outputs -------------------------------------------------------
 
 # Objetos a borrar
-erase <- ls()[!ls() %in% c("plot_rcero_rd", "plot_rcero_dn", "map_rcero")]
+erase <- ls()[!ls() %in% c("plot_rcero_rd", "plot_rcero_dn", "map_rcero", "scatter_1plotly",
+                           "timeline_plotly", "plot_matrix_plotly")]
 
 
 save.image("presentacion/objetos/graficos_ws")
