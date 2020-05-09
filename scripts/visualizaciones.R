@@ -57,15 +57,17 @@ rcero_nested <- rcero %>%
     group_by(provincia) %>% 
     mutate(fecha = lubridate::ymd(fecha),
            iddate = 1,
-           iddate = cumsum(iddate)
+           iddate = cumsum(iddate),
+           rollmean = c(NA, NA, NA, NA, zoo::rollmean(rcero, 5))
            ) %>% 
     ungroup() %>% 
-    select(code, iddate, rcero) %>% 
+    select(code, iddate, rcero, rollmean) %>%
+    #gather(tocolor, rcero, rcero, rollmean) %>% 
     mutate(tocolor = 1) %>% 
     nest(-code) %>% 
     mutate(
         data = map(data, mutate_mapping,
-                   hcaes(x = iddate, y = rcero, color = tocolor),
+                   hcaes(x = iddate, y = rollmean, color = tocolor),
                    drop = TRUE),
         data = map(data, list_parse)
     ) %>%
@@ -103,8 +105,8 @@ map_rcero <-  map_rcero %>%
         hc_opts = list(
             title = list(text = "", useHTML = TRUE),
             xAxis = list(type = "category"),
-            series = list(list(color = "midnightblue", name = "Rcero")
-        ))
+            series = list(list(color = "red", name = "rollmean"))
+            )
     ))
 
 # Gráficos del Rcero y su promedio movil --- -------------------------------
@@ -134,7 +136,7 @@ rollmean_toplot <- rcero %>%
 plot_rcero_rd <- highchart() %>% 
     hc_xAxis(categories = format(rcero_toplot$fecha, "%B %d")) %>% 
     hc_add_series(name = "Rcero",
-                  data = rceroto_toplot$`República Dominicana`,
+                  data = rcero_toplot$`República Dominicana`,
                   type = "column")  %>% 
     hc_add_series(name = "Promedio movil", data = rollmean_toplot$`República Dominicana`) %>% 
     hc_add_theme(hc_theme_elementary())
