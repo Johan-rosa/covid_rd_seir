@@ -255,12 +255,21 @@ timeline <- timeline %>%
                       day == "2020-03-01" ~ "Primer caso importado en RD",
                       day == "2020-03-12" ~ "Comisión seguimiento Covid-19",
                       day == "2020-03-15" ~ "Elecciones Municipales",
-                      day == "2020-03-16" ~ "Primera Muerte reportada de COVID-19",
+                      day == "2020-03-16" ~ "Primera muerte reportada de COVID-19",
                       day == "2020-03-18" ~ "Suspensión voluntaria de vuelos y cruceros desde y hacia Europa",
                       day == "2020-03-19" ~ "Suspención de docencia",
                       day == "2020-03-20" ~ "Reducción de horario de mobilidad 6am - 8pm",
                       day == "2020-03-27" ~ "Reducción de horario de mobilidad de 6am - 5pm"
-    ),
+    ),segment = case_when(day == "2020-02-26" ~ -5,
+                        day == "2020-03-01" ~ -3,
+                        day == "2020-03-12" ~ 3,
+                        day == "2020-03-15" ~ -2,
+                        day == "2020-03-16" ~ -3,
+                        day == "2020-03-18" ~ 4,
+                        day == "2020-03-19" ~ 3,
+                        day == "2020-03-20" ~ 2,
+                        day == "2020-03-27" ~ 4
+                        ),
     color = str_detect(hecho, "muerte|lecciones|importado|atinoam"),
     y = ifelse(is.na(hecho), NA, 1)
   ) 
@@ -268,15 +277,17 @@ timeline <- timeline %>%
 
 
 timeline_plot <- timeline %>% 
-  ggplot(aes(text = hecho,x = day, y = y, color = color)) +
+  ggplot(aes(text = hecho,x = day, y = segment, color = color)) +
+  geom_segment(aes(yend = segment, y = 0, xend = day)) +
   geom_point(size = 4) +
+  geom_hline(yintercept = 0) +
   scale_color_manual(values = c("midnightblue", "red")) +
   theme_minimal() +
   theme(legend.position = "none",
-        axis.line.x = element_line(color = "black"),
+        #axis.line.x = element_line(color = "black"),
         axis.text.y = element_blank(),
         axis.title = element_blank()) +
-  coord_cartesian(ylim = c(0,10), expand = FALSE)
+  coord_cartesian(ylim = c(-5.5,10), expand = FALSE)
 
 timeline_plotly <- plotly::ggplotly(timeline_plot, tooltip = c("text", "day"))
 

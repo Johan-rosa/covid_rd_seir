@@ -16,6 +16,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 options("kableExtra.html.bsTable" = T)
+options(knitr.kable.NA = '')
 library(highcharter)
 library(magrittr)
 library(kableExtra)
@@ -35,7 +36,7 @@ Las opiniones emitidas son personales y en condición de académicos. No represe
 
 <div style="font-size:40px">
 - Motivación <br><br>
-- Estrategia empirica <br><br>
+- Estrategia empírica <br><br>
 - Resultados <br><br>
 - Comentarios finales <br><br>
 </div>
@@ -45,7 +46,7 @@ Las opiniones emitidas son personales y en condición de académicos. No represe
 
 - Riesgo de propagación indiscriminada del COVID-19 es el principal desafío que enfrenta la ciudadanía en general a nivel global. <br><br>
 
-- La respuestaal riesgoha sido el distanciamiento. <br><br>
+- La respuesta al riesgo ha sido el distanciamiento. <br><br>
 
 - La efectividad de las estrategias es medida a través de las estimaciones del número de contagios $R_0$.<br><br>
 
@@ -83,7 +84,7 @@ $$R_0 = \frac{\beta S/N}{\gamma}$$
  <br>
  <br>
 
-- $R_0$, además de depender de parámetros epidemiológicos, depende de factores de ser influenciados por la conducta social. <br><br>
+- $R_0$, además de depender de parámetros epidemiológicos, depende de factores suceptibles de ser influenciados por la conducta social. <br><br>
 
 - En oras palabras, $R_0$ es un parámetro que cambia, ya sea por que las personas se aíslan, o porque las autoridades inducen el distaciamiento social. <br><br>
 
@@ -188,6 +189,8 @@ map_rcero
 <!--- --------------------------------------------------------------------- --->
 ## R0 por provincias
 
+<style> td{font-size:14px} </style>
+
 <div style="font-size:12px; color:black;">
 ```{r}
 table1 %>% 
@@ -201,6 +204,29 @@ kable() %>%
     pack_rows("", 14, 16)
 ```
 </div>
+
+<!--- --------------------------------------------------------------------- --->
+# Conclusiones
+
+
+<!--- --------------------------------------------------------------------- --->
+## Conclusiones
+
+- El monitoreo del $R_0$ es la clave para saber si las medidas tienen el efecto esperado y para ganarperspectiva temporal sobre la velocidad de convergencia hacia $R_0^* = 1$.
+
+- Desde los primeros días de las medidas se verifica una caída continua del $R_0$ en varios países, entre ellos la República Dominicana.
+
+- Sin embargo, llaman la atención dos resultados:
+
+  1. Se evidencia una desaparición de la caída de $R_0$ en R.D., aun en niveles mayores 1.
+
+  2. hay una heterogeneidad en la tendencia de los $R_0$ en las provincias de mayor incidencia del COVID-19.
+
+
+
+
+
+
 
 
 
