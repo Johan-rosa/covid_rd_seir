@@ -120,6 +120,13 @@ $$E(\varepsilon) = E(u) = 0;\ \ var(\varepsilon) = \sigma_\varepsilon ^2;\ \ var
 <!--- --------------------------------------------------------------------- --->
 # Resultados
 
+<!--- --------------------------------------------------------------------- --->
+## R<sub>0</sub> en economías avanzadas
+
+```{r fig.width=10, fig.height=5}
+plotly_rcero_paises %>% 
+  plotly::config(displayModeBar = F) 
+```
 
 
 <!--- --------------------------------------------------------------------- --->
@@ -150,55 +157,52 @@ plot_matrix_plotly %>%
 
 
 <!--- --------------------------------------------------------------------- --->
-## R0 República Dominicana y provincias
-
-<div class="row">
-  <div class="col-md-6" >
- 
-#### República Dominicana 
-  <center>
-```{r fig.height= 8, fig.width = 6}
-plot_rcero_rd %>% 
-    hc_size(width = 460, height = 420)
+## R<sub>0</sub> República Dominicana y provincias
+```{r fig.width=10}
+plotly_grid1 %>% 
+  plotly::config(displayModeBar = F) 
 ```
-  </center>
-  
-  
-  </div>
-  <div class="col-md-6">
-  
-#### Distrito Nacional
-  <center>
-```{r fig.height=8, fig.width=6}
- plot_rcero_dn%>% 
-    hc_size(width = 460, height = 420)
-```
-  </center>
- 
-  </div>
-</div>
 
 
 <!--- --------------------------------------------------------------------- --->
-## Cantidad de contagiados y evolución del R0
+## R<sub>0</sub>  Provincias
+
+```{r fig.width=10}
+plotly_grid2 %>% 
+  plotly::config(displayModeBar = F) 
+```
+
+<!--- --------------------------------------------------------------------- --->
+## R<sub>0</sub>  Provincias
+
+```{r fig.width=10}
+plotly_grid3%>% 
+  plotly::config(displayModeBar = F) 
+```
+
+
+<!--- --------------------------------------------------------------------- --->
+## Cantidad de contagiados y evolución del R<sub>0</sub>
 
 ```{r}
 map_rcero 
 ```
 
 <!--- --------------------------------------------------------------------- --->
-## R0 por provincias
+---
+
+#### R<sub>0</sub> por provincias 
 
 <style> td{font-size:14px} </style>
 
-<div style="font-size:12px; color:black;">
+<div style="font-size:11px; color:black; font-weight: 700;">
 ```{r}
 table1 %>% 
     setNames(c("Provincias", "Días transcurridos", "Días requeridos R<1.4",
                "[1.0-1.4]", "[1.5-1.9]", "[2.0-2.4]", "[2.5-3]", ">3")) %>% 
 kable() %>% 
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", "bordered"),
-                  full_width = F) %>% 
+                  full_width = T) %>% 
     add_header_above(c(" " = 1, " " = 1, " " = 1, "Días transcurridos en rango de R0*"= 5 )) %>% 
     row_spec(0:1, bold = T) %>% 
     pack_rows("", 14, 16)
