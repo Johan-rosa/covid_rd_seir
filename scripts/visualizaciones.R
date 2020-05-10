@@ -43,7 +43,7 @@ infectados <- infectados %>%
                               "Bahoruco" = "Baoruco",
                               "Hermanas Mirabal" = "Hermanas",
                               "Elías Piña" = "La Estrelleta") 
-    )
+    ) %>% left_join(catalogo_provincias, by = c("provincia_hc" = "provincia")) 
 
 # Data para el mapa
 mapdata2 <- mapdata %>% 
@@ -56,6 +56,21 @@ mapdata2 <- mapdata %>%
     filter(!is.na(infectados))
 
 
+infectados_nested <-  infectados %>% 
+  group_by(provincias) %>% 
+  mutate(flujo_infectados = infectados - lag(infectados),
+         rollmean = c(rep(NA, 6), zoo::rollmean(flujo_infectados, 7)),
+         tocolor = 1) %>% 
+  ungroup() %>% 
+  nest(-code) %>% 
+  mutate(data = map(data,mutate_mapping,
+                    hcaes(x = Dias, y = rollmean, color = tocolor),
+                    drop = TRUE),
+         data = map(data, list_parse)
+         ) %>% 
+  rename(ttdata = data)
+  
+  
 rcero_nested <- rcero %>% 
     group_by(provincia) %>% 
     mutate(fecha = lubridate::ymd(fecha),
@@ -76,7 +91,7 @@ rcero_nested <- rcero %>%
     ) %>%
     rename(ttdata = data)
 
-mapdata2 <- left_join(mapdata2, rcero_nested)
+mapdata2 <- left_join(mapdata2, infectados_nested)
 
 
 # Economias avanzadas -----------------------------------------------------
@@ -172,7 +187,7 @@ ggsave("visualizaciones/plot_rcero_spagetti.PNG",
 # Mapa --- -----------------------------------------------------------------
 
 # Tooltip plot con el Rcero por día 
-map_rcero <-  hcmap("countries/do/do-all",
+map_infectados <-  hcmap("countries/do/do-all",
       data = mapdata2, joinBy = c("hc-a2", "code"),
       value = "infectados",
       name = "Infectados",
@@ -181,7 +196,7 @@ map_rcero <-  hcmap("countries/do/do-all",
       borderwidth = 0.01)
 
 
-map_rcero <-  map_rcero %>% 
+map_infectados <-  map_infectados %>% 
     hc_tooltip(useHTML = TRUE, pointFormatter = tooltip_chart(
         width = 300,
         height = 250,
@@ -193,6 +208,29 @@ map_rcero <-  map_rcero %>%
             )
     ))
 
+
+
+# Heatmap por cada mil habitantes -----------------------------------------
+casos_mil <- read_excel("SIR_provincias/resultados_provincias_1.xlsx", sheet = "casos_mil")
+
+
+heat_map_casos <- casos_mil %>% 
+  mutate(fecha = seq(as.Date("2020-03-01"),
+                     by = "day",
+                     length.out = nrow(.))) %>% 
+  pivot_longer(cols = -fecha, names_to = "provincia", values_to = "infectados") %>%
+  mutate(provincia = str_remove(provincia, "m_"),
+         provincia = fct_reorder(provincia, infectados, .fun = sum),
+         infectados = round(infectados, 2)) %>% 
+  ggplot(aes(x = fecha, y = provincia, fill = infectados)) +
+  geom_tile() +
+  labs(y = NULL, x = NULL, fill = "Casos") +
+  scale_fill_viridis_c() +
+  coord_cartesian(expand = FALSE) +
+  theme(axis.text = element_text(size = 14))
+
+plotly_heatmap_casos <- plotly::ggplotly(heat_map_casos)
+  
 # Gráficos del Rcero y su promedio movil --- -------------------------------
 
 rcero <- rcero %>% 

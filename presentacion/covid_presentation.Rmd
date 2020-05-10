@@ -176,17 +176,26 @@ plotly_grid2 %>%
 ## R<sub>0</sub>  Provincias
 
 ```{r fig.width=10}
-plotly_grid3%>% 
+plotly_grid3 %>% 
   plotly::config(displayModeBar = F) 
 ```
 
 
 <!--- --------------------------------------------------------------------- --->
-## Cantidad de contagiados y evolución del R<sub>0</sub>
+## Mapa de la cantidad de contagios
 
 ```{r}
-map_rcero 
+map_infectados 
 ```
+
+
+<!--- --------------------------------------------------------------------- --->
+## Contagios por cada 1,000 habitantes
+```{r fig.width=10}
+plotly_heatmap_casos %>% 
+  plotly::config(displayModeBar = F)
+```
+
 
 <!--- --------------------------------------------------------------------- --->
 ---
