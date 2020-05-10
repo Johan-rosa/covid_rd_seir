@@ -27,6 +27,9 @@ mapdata <- get_data_from_map(download_map_data("countries/do/do-all"))
 # highchart catalogo provincia
 catalogo_provincias <- mapdata %>% select(code = `hc-a2`, provincia = `woe-name`)
 
+rcero_paises <- read_excel("SIR_provincias/r0avanzadas.xlsx") %>% 
+  pivot_longer(cols = -fecha, names_to = "pais", values_to = "rcero")
+
 
 # Manipulando los datos --- ------------------------------------------------
 
@@ -76,6 +79,42 @@ rcero_nested <- rcero %>%
 mapdata2 <- left_join(mapdata2, rcero_nested)
 
 
+# Economias avanzadas -----------------------------------------------------
+library(ggrepel)
+
+paises_principales <- c("ESP", "ITA", "USA", "SWE", "CHN")
+
+labels <- rcero_paises %>%
+  mutate(pais = str_remove_all(pais, "R0_|_VA7D")) %>% 
+  mutate(fecha = as.Date(fecha)) %>%
+  filter(pais %in% paises_principales) %>% 
+  filter(fecha == '2020-03-04') %>% 
+  mutate(fecha = as.Date("2020-03-02"))
+  
+
+
+plot_rcero_paises <- rcero_paises %>% 
+  mutate(pais = str_remove_all(pais, "R0_|_VA7D"),
+         fecha = lubridate::ymd(fecha)) %>% 
+  filter(pais %in% paises_principales) %>% 
+  filter(fecha > "2020-03-03") %>%
+  group_by(pais) %>% 
+  mutate(label = case_when(fecha == first(fecha) ~ pais)) %>% 
+  ggplot(aes(x = fecha, y = rcero, color = pais)) +
+  geom_line(size = 1) +
+  geom_text(data = labels, aes(x = fecha, y = rcero, label = pais), hjust = 1) +
+  # geom_label_repel(
+  #   aes(label = label),
+  #   nudge_x = -1,
+  #   na.rm = FALSE,
+  #   size = 3
+  # ) +
+  theme_minimal() +
+  coord_cartesian(xlim = c(as.Date("2020-03-01"), as.Date("2020-05-05"))) +
+  theme(legend.position = "none") +
+  ggthemes::scale_color_tableau()
+
+plotly::ggplotly(plot_rcero_paises)
 
 # Spagetti plot -----------------------------------------------------------
 
