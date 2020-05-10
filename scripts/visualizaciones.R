@@ -82,39 +82,46 @@ mapdata2 <- left_join(mapdata2, rcero_nested)
 # Economias avanzadas -----------------------------------------------------
 library(ggrepel)
 
-paises_principales <- c("ESP", "ITA", "USA", "SWE", "CHN")
+paises_principales <- c("ESP", "ITA", "USA", "SWE", "CHN", "DEU", "KOR")
 
 labels <- rcero_paises %>%
   mutate(pais = str_remove_all(pais, "R0_|_VA7D")) %>% 
   mutate(fecha = as.Date(fecha)) %>%
   filter(pais %in% paises_principales) %>% 
   filter(fecha == '2020-03-04') %>% 
-  mutate(fecha = as.Date("2020-03-02"))
+  mutate(fecha = as.Date("2020-03-01"),
+         pais = recode(pais, "ESP" = "España",
+                       "ITA" = "Italia",
+                       "USA" = "USA",
+                       "SWE" = "Suecia",
+                       "CHN" = "China",
+                       "DEU" = "Alemania",
+                       "KOR" = "Korea"))
   
-
-
 plot_rcero_paises <- rcero_paises %>% 
   mutate(pais = str_remove_all(pais, "R0_|_VA7D"),
          fecha = lubridate::ymd(fecha)) %>% 
   filter(pais %in% paises_principales) %>% 
   filter(fecha > "2020-03-03") %>%
-  group_by(pais) %>% 
-  mutate(label = case_when(fecha == first(fecha) ~ pais)) %>% 
+  mutate(pais = recode(pais, "ESP" = "España",
+                       "ITA" = "Italia",
+                       "USA" = "USA",
+                       "SWE" = "Suecia",
+                       "CHN" = "China",
+                       "DEU" = "Alemania",
+                       "KOR" = "Korea")) %>% 
   ggplot(aes(x = fecha, y = rcero, color = pais)) +
   geom_line(size = 1) +
   geom_text(data = labels, aes(x = fecha, y = rcero, label = pais), hjust = 1) +
-  # geom_label_repel(
-  #   aes(label = label),
-  #   nudge_x = -1,
-  #   na.rm = FALSE,
-  #   size = 3
-  # ) +
   theme_minimal() +
-  coord_cartesian(xlim = c(as.Date("2020-03-01"), as.Date("2020-05-05"))) +
-  theme(legend.position = "none") +
-  ggthemes::scale_color_tableau()
+  coord_cartesian(xlim = c(as.Date("2020-02-29"), as.Date("2020-05-05"))) +
+  theme(legend.position = "none",
+        axis.title = element_text(face = "bold", size = 12)) +
+  ggthemes::scale_color_tableau() +
+  labs(x = NULL, y = "R0")
 
-plotly::ggplotly(plot_rcero_paises)
+plotly_rcero_paises <-  plotly::ggplotly(plot_rcero_paises)
+  
 
 # Spagetti plot -----------------------------------------------------------
 
@@ -209,23 +216,60 @@ rollmean_toplot <- rcero %>%
     pivot_wider(names_from = provincia, values_from = rollmean)
 
 
-# Gráfico Nacional 
-plot_rcero_rd <- highchart() %>% 
-    hc_xAxis(categories = format(rcero_toplot$fecha, "%B %d")) %>% 
-    hc_add_series(name = "Rcero",
-                  data = rcero_toplot$`República Dominicana`,
-                  type = "column")  %>% 
-    hc_add_series(name = "Promedio movil", data = rollmean_toplot$`República Dominicana`) %>% 
-    hc_add_theme(hc_theme_elementary())
+# Combinaciones de provincias
 
-# Gráfico Distrito Nacional 
-plot_rcero_dn <- highchart() %>% 
-    hc_xAxis(categories = format(rcero_toplot$fecha, "%B %d")) %>% 
-    hc_add_series(name = "Rcero",
-                  data = rcero_toplot$`Distrito Nacional`,
-                  type = "column")  %>% 
-    hc_add_series(name = "Promedio movil", data = rollmean_toplot$`Distrito Nacional`) %>% 
-    hc_add_theme(hc_theme_elementary())
+rd_dn <- c("República Dominicana", "Distrito Nacional")
+grid2 <- c("Duarte", "La Vega", "Monseñor Nouel", "Sánchez Ramírez")
+grid3 <- c("Espaillat", "Hermanas Mirabal", "Puerto Plata", "Santiago")
+
+# Grid RD y Distrito
+plot_grid1 <- rcero %>% 
+  filter(provincia %in% rd_dn) %>% 
+  ggplot(aes(x = fecha)) +
+  geom_col(aes(y = rcero), fill = "slateblue3") +
+  geom_line(aes(y = rollmean), color = "red", size = 1) +
+  facet_wrap(~provincia) +
+  geom_hline(yintercept = 1, linetype = 2, size = 0.8) +
+  theme_minimal() +
+  theme(strip.text = element_text(face = "bold", size = 15)) +
+  labs(x = NULL, y = "R0")
+
+
+plotly_grid1 <- plotly::ggplotly(plot_grid1)
+
+
+# Grid 2
+plot_grid2 <- rcero %>% 
+  filter(provincia %in% grid2) %>% 
+  ggplot(aes(x = fecha)) +
+  geom_col(aes(y = rcero), fill = "slateblue3") +
+  geom_line(aes(y = rollmean), color = "red", size = 1) +
+  facet_wrap(~provincia, scales = "free") +
+  geom_hline(yintercept = 1, linetype = 2, size = 0.8) +
+  theme_minimal() +
+  theme(strip.text = element_text(face = "bold", size = 13)) +
+  labs(x = NULL, y = "R0")
+
+
+plotly_grid2 <-plotly::ggplotly(plot_grid2)
+
+
+# Grid 3
+plot_grid3 <- rcero %>% 
+  filter(provincia %in% grid3) %>% 
+  ggplot(aes(x = fecha)) +
+  geom_col(aes(y = rcero), fill = "slateblue3") +
+  geom_line(aes(y = rollmean), color = "red", size = 1) +
+  facet_wrap(~provincia, scales = "free") +
+  geom_hline(yintercept = 1, linetype = 2, size = 0.8) +
+  theme_minimal() +
+  theme(strip.text = element_text(face = "bold", size = 13)) +
+  labs(x = NULL, y = "R0")
+
+
+plotly_grid3 <-plotly::ggplotly(plot_grid3)
+
+
 
 
 
@@ -371,7 +415,7 @@ timeline_plot <- timeline %>%
 timeline_plotly <- plotly::ggplotly(timeline_plot, tooltip = c("text", "day"))
 
 
-plotly::subplot(scatter1, plot_matix_medidas)
+#plotly::subplot(scatter1, plot_matix_medidas)
 
 
 # Tablas HTML -------------------------------------------------------------
@@ -402,7 +446,8 @@ table1 <- structure(
 
 # Objetos a borrar
 erase <- ls()[!ls() %in% c("plot_rcero_rd", "plot_rcero_dn", "map_rcero", "scatter_1plotly",
-                           "timeline_plotly", "plot_matrix_plotly", "table1")]
+                           "timeline_plotly", "plot_matrix_plotly", "table1",
+                           "plotly_rcero_paises", "plot_rcero_spagetti")]
 
 
 save.image("presentacion/objetos/graficos_ws")
