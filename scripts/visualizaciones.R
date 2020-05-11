@@ -259,6 +259,7 @@ rollmean_toplot <- rcero %>%
 rd_dn <- c("República Dominicana", "Distrito Nacional")
 grid2 <- c("Duarte", "La Vega", "Monseñor Nouel", "Sánchez Ramírez")
 grid3 <- c("Espaillat", "Hermanas Mirabal", "Puerto Plata", "Santiago")
+grind4 <- c("La Altagracia", "La Romana", "San Cristóbal", "Santo Domingo")
 
 # Grid RD y Distrito
 plot_grid1 <- rcero %>% 
@@ -308,8 +309,18 @@ plot_grid3 <- rcero %>%
 plotly_grid3 <-plotly::ggplotly(plot_grid3)
 
 
+plot_grid4 <- rcero %>% 
+  filter(provincia %in% grind4) %>% 
+  ggplot(aes(x = fecha)) +
+  geom_col(aes(y = rcero), fill = "slateblue3") +
+  geom_line(aes(y = rollmean), color = "red", size = 1) +
+  facet_wrap(~provincia, scales = "free") +
+  geom_hline(yintercept = 1, linetype = 2, size = 0.8) +
+  theme_minimal() +
+  theme(strip.text = element_text(face = "bold", size = 15)) +
+  labs(x = NULL, y = "R0")
 
-
+plotly_grid4 <-plotly::ggplotly(plot_grid4)
 
 # Graficos reproducción de contagios por país -----------------------------
 
@@ -412,23 +423,23 @@ timeline <- tibble(day = seq(as.Date("2020-02-21"), as.Date("2020-04-05"), by = 
 timeline <- timeline %>% 
   mutate(
     
-    hecho = case_when(day == "2020-02-26" ~ "Primer caso de Covid Latinoamérica (Brazin)",
-                      day == "2020-03-01" ~ "Primer caso importado en RD",
-                      day == "2020-03-12" ~ "Comisión seguimiento Covid-19",
-                      day == "2020-03-15" ~ "Elecciones Municipales",
-                      day == "2020-03-16" ~ "Primera muerte reportada de COVID-19",
-                      day == "2020-03-18" ~ "Suspensión voluntaria de vuelos y cruceros desde y hacia Europa",
-                      day == "2020-03-19" ~ "Suspención de docencia",
-                      day == "2020-03-20" ~ "Reducción de horario de mobilidad 6am - 8pm",
-                      day == "2020-03-27" ~ "Reducción de horario de mobilidad de 6am - 5pm"
+    hecho = case_when(day == "2020-02-26" ~ "Primer caso de\n Covid Latinoamérica\n (Brasil)",
+                      day == "2020-03-01" ~ "Primer caso\n importado en RD",
+                      day == "2020-03-12" ~ "Comisión\n seguimiento\n Covid-19",
+                      day == "2020-03-15" ~ "Elecciones",
+                      day == "2020-03-16" ~ "Primera muerte\n por COVID-19",
+                      day == "2020-03-18" ~ "Suspensión voluntaria\n de vuelos y cruceros",
+                      day == "2020-03-19" ~ "Suspención\n de docencia",
+                      day == "2020-03-20" ~ "",
+                      day == "2020-03-27" ~ "Horario mobilidad\n de 6am - 5pm"
     ),segment = case_when(day == "2020-02-26" ~ -5,
-                        day == "2020-03-01" ~ -3,
+                        day == "2020-03-01" ~ 5,
                         day == "2020-03-12" ~ 3,
-                        day == "2020-03-15" ~ -2,
+                        day == "2020-03-15" ~ 1,
                         day == "2020-03-16" ~ -3,
-                        day == "2020-03-18" ~ 4,
-                        day == "2020-03-19" ~ 3,
-                        day == "2020-03-20" ~ 2,
+                        day == "2020-03-18" ~ 6,
+                        day == "2020-03-19" ~ -6,
+                        day == "2020-03-20" ~ 0,
                         day == "2020-03-27" ~ 4
                         ),
     color = str_detect(hecho, "muerte|lecciones|importado|atinoam"),
@@ -437,18 +448,36 @@ timeline <- timeline %>%
 
 
 
-timeline_plot <- timeline %>% 
-  ggplot(aes(text = hecho,x = day, y = segment, color = color)) +
+timeline_plot <-
+  timeline %>% 
+  ggplot(aes(text = hecho,x = day, y = 0, color = color)) +
+  geom_hline(yintercept = 0) +
   geom_segment(aes(yend = segment, y = 0, xend = day)) +
   geom_point(size = 4) +
-  geom_hline(yintercept = 0) +
   scale_color_manual(values = c("midnightblue", "red")) +
   theme_minimal() +
+  geom_text(aes(x = day, y = segment * 1.3, label = hecho), size = 4) +
   theme(legend.position = "none",
         #axis.line.x = element_line(color = "black"),
         axis.text.y = element_blank(),
         axis.title = element_blank()) +
-  coord_cartesian(ylim = c(-5.5,10), expand = FALSE)
+  coord_cartesian(ylim = c(-10,10), expand = FALSE)
+
+# timeline_plot <-  
+#   timeline_plot +
+#   annotate("text", x = as.Date("2020-03-06"), y = -4,
+#            label = "Elecciones\n municipales",
+#            size = 5) +
+#   annotate("text", x = as.Date("2020-03-24"), y = -3,
+#            label = 'Horario de mobilidad\n de 6am - 8pm', size = 4)
+  
+  # annotate("text", x = as.Date("2020-03-05"), y = 8, size = 3.5,
+  #          label = " Creación Comisiónn\n seguimiento Covid-19") +
+  # annotate("text", x = as.Date("2020-03-06"), y = -8,
+  #          label = "Elecciones Municipales", size = 3.5)
+
+
+
 
 timeline_plotly <- plotly::ggplotly(timeline_plot, tooltip = c("text", "day"))
 

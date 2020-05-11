@@ -1,7 +1,7 @@
 ---
 title: "COVID-19 en la República Dominicana"
 subtitle: "Declaramos la guerra, pero ... ¿la estamos ganando?"
-date: "Abril 2019"
+date: "Mayo 2020"
 author: "Vicente de Peña, Raúl Ovalle, Francisco Ramírez"
 output: 
     ioslides_presentation:
@@ -178,6 +178,12 @@ plotly_grid2 %>%
 ```{r fig.width=10}
 plotly_grid3 %>% 
   plotly::config(displayModeBar = F) 
+```
+
+<!--- --------------------------------------------------------------------- --->
+## R<sub>0</sub>  Provincias
+```{r fig.width=10}
+plotly_grid4
 ```
 
 
