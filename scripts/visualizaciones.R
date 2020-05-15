@@ -60,6 +60,7 @@ infectados_nested <-  infectados %>%
   group_by(provincias) %>% 
   mutate(flujo_infectados = infectados - lag(infectados),
          rollmean = c(rep(NA, 6), zoo::rollmean(flujo_infectados, 7)),
+         rollmean = ifelse(rollmean < 0, 0, rollmean),
          tocolor = 1) %>% 
   ungroup() %>% 
   nest(-code) %>% 
@@ -204,7 +205,7 @@ map_infectados <-  map_infectados %>%
         hc_opts = list(
             title = list(text = "", useHTML = TRUE),
             xAxis = list(type = "category"),
-            series = list(list(color = "red", name = "rollmean"))
+            series = list(list(color = "red", name = "rollmean", big.mark = ","))
             )
     ))
 
